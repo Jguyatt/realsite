@@ -17,8 +17,6 @@ import MobileNav from "@/components/MobileNav"
 // Import demo pages
 import FeedPage from "@/app/feed/page"
 import BuilderPage from "@/app/demo/builder/page"
-import ThreadPage from "@/app/demo/thread/page"
-import LimitsPage from "@/app/demo/limits/page"
 import KYCPage from "@/app/demo/kyc/page"
 import TrustPage from "@/app/demo/trust/page"
 import SecurityPage from "@/app/security/page"
@@ -29,9 +27,7 @@ const tabs = [
   { id: 'feed', name: 'Feed', icon: Home },
   { id: 'builder', name: 'Builder', icon: TrendingUp },
   { id: 'p2p', name: 'P2P Bets', icon: Zap },
-  { id: 'thread', name: 'Thread', icon: MessageSquare },
   { id: 'contacts', name: 'Add Contact', icon: UserPlus },
-  { id: 'limits', name: 'Limits', icon: Shield },
 ]
 
 export default function AppSimulator() {
@@ -45,12 +41,8 @@ export default function AppSimulator() {
         return <BuilderPage />
       case 'p2p':
         return <P2PPage />
-      case 'thread':
-        return <ThreadPage />
       case 'contacts':
         return <ContactsPage />
-      case 'limits':
-        return <LimitsPage />
       default:
         return <FeedPage />
     }

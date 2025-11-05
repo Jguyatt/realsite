@@ -20,7 +20,7 @@ export type Parlay = {
 
 export type Comment = {
   id: string
-  threadId: string
+  parlayId: string
   authorId: string
   authorName: string
   text: string
@@ -64,7 +64,7 @@ type State = {
   // Actions
   copyParlay: (id: string) => void
   tweakLeg: (parlayId: string, legIndex: number, updates: Partial<Leg>) => void
-  postComment: (threadId: string, text: string) => void
+  postComment: (parlayId: string, text: string) => void
   applyStake: (amount: number) => void
   requestLimitChange: (newLimit: number, reason: string) => void
   setCurrentDraft: (parlay: Parlay | null) => void
@@ -124,10 +124,10 @@ export const useStore = create<State>((set, get) => ({
     })
   },
   
-  postComment: (threadId, text) => {
+  postComment: (parlayId, text) => {
     const newComment: Comment = {
       id: `c-${Date.now()}`,
-      threadId,
+      parlayId,
       authorId: get().user.id,
       authorName: get().user.name,
       text,
@@ -136,10 +136,7 @@ export const useStore = create<State>((set, get) => ({
     }
     
     set({
-      comments: [newComment, ...get().comments],
-      threads: get().threads.map(t =>
-        t.id === threadId ? { ...t, commentCount: t.commentCount + 1 } : t
-      )
+      comments: [newComment, ...get().comments]
     })
   },
   

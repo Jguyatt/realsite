@@ -1,15 +1,19 @@
 'use client'
 
+import { useState } from "react"
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import { useStore, Parlay } from "@/lib/store"
 import { formatCurrency, formatOdds, formatDate } from "@/lib/utils"
 import { combineAmericanOdds, calculateParlayPayout } from "@/lib/odds"
 import ParlayLeg from "./ParlayLeg"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import ReviewBetModal from "./ReviewBetModal"
+import Comment from "@/components/social/Comment"
+import Composer from "@/components/social/Composer"
+import { MessageCircle } from "lucide-react"
 
 interface ParlayCardProps {
   parlay: Parlay
@@ -17,19 +21,18 @@ interface ParlayCardProps {
 }
 
 export default function ParlayCard({ parlay, showActions = true }: ParlayCardProps) {
-  const { copyParlay } = useStore()
-  const router = useRouter()
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [showComments, setShowComments] = useState(false)
+  const { comments } = useStore()
   
   const combinedOdds = combineAmericanOdds(parlay.legs.map(l => l.odds))
   const potentialReturn = calculateParlayPayout(parlay.stake, parlay.legs.map(l => l.odds))
   
-  const handleCopyAndTweak = () => {
-    copyParlay(parlay.id)
-    toast.success(`Copied ${parlay.authorName}'s parlay!`, {
-      duration: 3000
-    })
-    router.push('/demo/builder')
+  const handleCopyClick = () => {
+    setShowReviewModal(true)
   }
+  
+  const parlayComments = comments.filter(c => c.parlayId === parlay.id)
   
   const initials = parlay.authorName.substring(0, 2).toUpperCase()
   
@@ -58,25 +61,59 @@ export default function ParlayCard({ parlay, showActions = true }: ParlayCardPro
         ))}
       </CardContent>
       
-      <CardFooter className="flex items-center justify-between pt-4 border-t border-border bg-surface-hover/50">
-        <div className="flex items-center gap-6">
-          <div>
-            <div className="text-xs text-text-dim mb-1">Stake</div>
-            <div className="font-bold font-mono text-lg text-text">{formatCurrency(parlay.stake)}</div>
+      <CardFooter className="flex-col items-stretch pt-4 border-t border-border bg-surface-hover/50 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div>
+              <div className="text-xs text-text-dim mb-1">Stake</div>
+              <div className="font-bold font-mono text-lg text-text">{formatCurrency(parlay.stake)}</div>
+            </div>
+            <div className="w-px h-12 bg-border"></div>
+            <div>
+              <div className="text-xs text-text-dim mb-1">To Win</div>
+              <div className="font-bold font-mono text-lg text-[#10B981]">{formatCurrency(potentialReturn)}</div>
+            </div>
           </div>
-          <div className="w-px h-12 bg-border"></div>
-          <div>
-            <div className="text-xs text-text-dim mb-1">To Win</div>
-            <div className="font-bold font-mono text-lg text-[#10B981]">{formatCurrency(potentialReturn)}</div>
-          </div>
+          
+          {showActions && (
+            <Button onClick={handleCopyClick} className="accent-gradient text-white font-semibold rounded-full shadow-md">
+              Copy
+            </Button>
+          )}
         </div>
         
-        {showActions && (
-          <Button onClick={handleCopyAndTweak} className="accent-gradient text-white font-semibold rounded-full shadow-md">
-            Copy
-          </Button>
+        {/* Comments Toggle */}
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-text-dim hover:text-text"
+          onClick={() => setShowComments(!showComments)}
+        >
+          <MessageCircle className="h-4 w-4 mr-2" />
+          {parlayComments.length} {parlayComments.length === 1 ? 'comment' : 'comments'}
+        </Button>
+        
+        {/* Comments Section */}
+        {showComments && (
+          <div className="space-y-4 pt-2">
+            <Separator />
+            <Composer parlayId={parlay.id} placeholder="Share your thoughts on this parlay..." />
+            
+            {parlayComments.length > 0 && (
+              <div className="space-y-2 bg-white rounded-2xl p-4">
+                {parlayComments.map((comment) => (
+                  <Comment key={comment.id} comment={comment} />
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </CardFooter>
+      
+      <ReviewBetModal
+        open={showReviewModal}
+        onOpenChange={setShowReviewModal}
+        parlay={parlay}
+      />
     </Card>
   )
 }

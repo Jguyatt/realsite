@@ -112,7 +112,7 @@ export const mockThreads: Thread[] = [
 export const mockComments: Comment[] = [
   {
     id: 'c1',
-    threadId: 't1',
+    parlayId: 'p1',
     authorId: 'u3',
     authorName: 'Ava',
     text: "Love this parlay! I'm tailing the Leafs and Bills picks 💪",
@@ -124,7 +124,7 @@ export const mockComments: Comment[] = [
   },
   {
     id: 'c2',
-    threadId: 't1',
+    parlayId: 'p1',
     authorId: 'u4',
     authorName: 'Mike',
     text: 'Iffy on the Raptors spread but the rest looks solid',
@@ -135,7 +135,7 @@ export const mockComments: Comment[] = [
   },
   {
     id: 'c3',
-    threadId: 't1',
+    parlayId: 'p1',
     authorId: 'u2',
     authorName: 'Sam',
     text: '@Mike I hear you, but the Raptors have been covering lately. Worth the risk imo',

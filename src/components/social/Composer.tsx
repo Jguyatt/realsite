@@ -9,18 +9,18 @@ import { Send } from "lucide-react"
 import { toast } from "sonner"
 
 interface ComposerProps {
-  threadId: string
+  parlayId: string
   placeholder?: string
 }
 
-export default function Composer({ threadId, placeholder = "Add a comment..." }: ComposerProps) {
+export default function Composer({ parlayId, placeholder = "Add a comment..." }: ComposerProps) {
   const { user, postComment } = useStore()
   const [text, setText] = useState("")
   
   const handlePost = () => {
     if (!text.trim()) return
     
-    postComment(threadId, text)
+    postComment(parlayId, text)
     setText("")
     toast.success("Comment posted!")
   }
